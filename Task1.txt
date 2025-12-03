@@ -1,0 +1,82 @@
+======================================================
+APEXPLANET INTERNSHIP TASK 1: FOUNDATION & ENVIRONMENT SETUP NOTES (EXPANDED)
+======================================================
+
+Objective:
+To build strong fundamentals in cybersecurity, networking, and cryptography, and successfully set up a professional virtual hacking lab environment.
+
+---
+1. CYBERSECURITY BASICS
+---
+
+1.1. The CIA Triad - Technical Implementation
+* C - Confidentiality: Data access control. Implemented via **TLS/SSL** (data-in-transit) and **File-level Encryption** (data-at-rest).
+* I - Integrity: Data accuracy. Verified by comparing **Message Digests** (hash values, e.g., SHA256) before and after transmission/storage.
+* A - Availability: Accessibility when needed. Measured by metrics like **MTTR** (Mean Time to Repair) and **RTO** (Recovery Time Objective).
+
+1.2. Threat Types & Attack Vectors
+* SQL Injection: Often caused by lack of **parameterized queries** in code.
+* Ransomware: Typically delivered via Phishing or exploiting **unpatched Service Vulnerabilities**.
+* Social Engineering: Manipulating individuals (the human element).
+
+---
+2. LAB ENVIRONMENT SETUP
+---
+
+The lab uses an isolated private network (Host-Only Adapter) for security.
+
+* Attacker Machine: **Kali Linux** VM.
+* Target Machine: **Metasploitable2 / DVWA** VM (deliberately vulnerable).
+* Network: **Host-Only Adapter** (e.g., 192.168.56.0/24) to ensure isolation from the public internet.
+* Connectivity Test: Successful 'ping [target_ip]' command executed from Kali to the target.
+
+---
+3. LINUX FUNDAMENTALS (ADVANCED SECURITY COMMANDS)
+---
+
+* **Socket Statistics (Replacement for netstat):**
+    * `ss -tuln`: Shows all actively **listening** sockets (TCP/UDP), crucial for identifying running services and potential backdoors.
+* **DNS Reconnaissance:**
+    * `dig [domain] @[dns_server]`: Queries a specific DNS server directly, bypassing local caching for reconnaissance.
+* **Web Server Headers:**
+    * `curl -I [target_ip]`: Fetches only the **HTTP headers** (Head request), often revealing the web server version (e.g., Apache/2.2.8).
+* **ARP Table Inspection:**
+    * `arp -a`: Displays the IP-to-MAC address mapping on the local segment, used to detect anomalies like **ARP Spoofing**.
+* **Firewall Rules:**
+    * `iptables -L`: Lists all active packet filtering rules on the host OS (requires sudo).
+
+---
+4. NETWORKING BASICS
+---
+
+* OSI Model: Conceptual framework (L3-Network/IP, L7-Application/HTTP).
+* TCP/IP Suite: TCP is reliable (connection-oriented); UDP is fast (connectionless).
+* IP Addressing, Subnetting, NAT: NAT translates private IPs (internal lab) to a public IP (external internet access, but not used in the isolated lab).
+
+---
+5. CRYPTOGRAPHY BASICS (ADVANCED OPENSSL DEMO)
+---
+
+* **Symmetric vs. Asymmetric:** Symmetric (AES) is fast, single-key. Asymmetric (RSA) is slow, uses Public/Private key pairs for key exchange and digital signing.
+* **Hashing (Integrity):**
+    * `openssl dgst -sha256 [file.txt]`: Generates the SHA256 hash (fingerprint) of a file.
+* **RSA Key Generation (Asymmetric Foundation):**
+    * `openssl genrsa -out private_key.pem 2048`: Generates a strong 2048-bit **Private Key**.
+    * `openssl rsa -in private_key.pem -pubout -out public_key.pem`: Extracts the sharable **Public Key**.
+* **Cipher Modes:** Mention that symmetric ciphers use modes like **CBC** (Cipher Block Chaining) or **GCM** (faster, authenticated encryption).
+
+---
+6. TOOL FAMILIARIZATION (ADVANCED USAGE)
+---
+
+* **Wireshark:**
+    * **Display Filters:** Beyond ICMP, use specific filters like `http.request` to isolate web traffic or `tcp.flags.syn == 1` to analyze connection attempts.
+* **Nmap (Leveraging NSE - Nmap Scripting Engine):**
+    * `nmap -sV -sC -A [target_ip]`: **Aggressive Scan** combining version detection, default scripts, and OS detection for comprehensive reconnaissance.
+    * `nmap --script http-title [target_ip]`: Quickly fetches the HTTP title to identify the running web application.
+    * `nmap -p 21 -sV --script ftp-anon [target_ip]`: Checks for anonymous login vulnerability on the FTP port.
+* **Netcat (nc/ncat):**
+    * **Listener Setup:** `nc -lvp 4444`: Sets up a simple attacker listener on port 4444 (foundation for reverse shells).
+    * **Banner Grabbing:** `nc -v [target_ip] 80`: Connects to port 80 to manually retrieve the service banner/version.
+
+======================================================
